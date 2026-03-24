@@ -15,6 +15,8 @@ export const TURBOS: TurboProduct[] = [
     note: 'Compact turbo suitable for smaller engines with moderate boost requirements.',
     recommendedUse: 'Street builds, mild performance upgrades.',
     sourceFamily: 'Garrett GTX3576R Gen II',
+    url: 'https://yourstore.com/product/gtx3576r',
+    affiliateUrl: 'https://affiliate.example.com/?product=gtx3576r',
   },
   {
     id: 'gen-62-68',

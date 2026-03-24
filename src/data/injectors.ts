@@ -9,6 +9,8 @@ export const INJECTORS: InjectorProduct[] = [
     lbHr: 78,
     fuels: ['pump_gas'],
     note: 'Great for mild street turbo applications with excellent atomization.',
+    url: 'https://yourstore.com/product/950cc-injectors',
+    affiliateUrl: 'https://affiliate.example.com/?product=950cc-injectors',
   },
   {
     id: 'inj-1200',

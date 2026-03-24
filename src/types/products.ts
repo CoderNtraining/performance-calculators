@@ -14,6 +14,7 @@ export interface TurboProduct {
   recommendedUse: string;
   sourceFamily?: string;
   url?: string;
+  affiliateUrl?: string;
 }
 
 export interface InjectorProduct {
@@ -25,6 +26,7 @@ export interface InjectorProduct {
   fuels: Array<'pump_gas' | 'e85'>;
   note: string;
   url?: string;
+  affiliateUrl?: string;
 }
 
 export interface FuelSystemProduct {
@@ -35,4 +37,5 @@ export interface FuelSystemProduct {
   compatibleFuels: Array<'pump_gas' | 'e85'>;
   note: string;
   url?: string;
+  affiliateUrl?: string;
 }

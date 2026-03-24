@@ -61,23 +61,46 @@ export function calculateTurboSizing(input: CalculationInput): TurboCalculationR
   const parsed = parseEngineDisplacement(input.engineDisplacement);
   if (!parsed) return null;
 
-  const pressureRatio = (input.boostPsi + 14.7) / 14.7;
-  const naCfm = (parsed.cubicInches * input.maxRpm * (input.volumetricEfficiency / 100)) / 3456;
-  const boostedCfm = naCfm * pressureRatio;
-  const requiredAirflowLbMin = boostedCfm * 0.076;
-  const estimatedCrankHp = requiredAirflowLbMin * 10;
+  let boostPsi: number;
+  let requiredAirflowLbMin: number;
+  let pressureRatio: number;
+  let estimatedCrankHp: number;
 
-  const sorted = [...TURBOS].sort((a, b) => a.airflowLbMin - b.airflowLbMin);
-  const matches = sorted.filter((turbo) => turbo.airflowLbMin >= requiredAirflowLbMin).slice(0, 2);
-  const selectedTurbo = matches.length > 0 ? matches[0] : sorted[sorted.length - 1];
+  if (input.sizingMode === 'hp') {
+    boostPsi = 15; // default estimate
+    pressureRatio = (boostPsi + 14.7) / 14.7;
+    const naCfm = (parsed.cubicInches * input.maxRpm * (input.volumetricEfficiency / 100)) / 3456;
+    const boostedCfm = naCfm * pressureRatio;
+    requiredAirflowLbMin = boostedCfm * 0.076;
+    estimatedCrankHp = input.horsepower;
+  } else {
+    boostPsi = input.boostPsi;
+    pressureRatio = (boostPsi + 14.7) / 14.7;
+    const naCfm = (parsed.cubicInches * input.maxRpm * (input.volumetricEfficiency / 100)) / 3456;
+    const boostedCfm = naCfm * pressureRatio;
+    requiredAirflowLbMin = boostedCfm * 0.076;
+    estimatedCrankHp = requiredAirflowLbMin * 10;
+  }
+
+  let matches: TurboProduct[];
+  if (input.sizingMode === 'hp') {
+    const hp = input.horsepower;
+    matches = TURBOS.filter((turbo) => turbo.airflowLbMin >= requiredAirflowLbMin && turbo.horsepowerRangeMin <= hp && hp <= turbo.horsepowerRangeMax)
+      .sort((a, b) => a.airflowLbMin - b.airflowLbMin)
+      .slice(0, 2);
+  } else {
+    const sorted = [...TURBOS].sort((a, b) => a.airflowLbMin - b.airflowLbMin);
+    matches = sorted.filter((turbo) => turbo.airflowLbMin >= requiredAirflowLbMin).slice(0, 2);
+  }
+
+  const selectedTurbo = matches.length > 0 ? matches[0] : TURBOS.sort((a, b) => b.airflowLbMin - a.airflowLbMin)[0];
 
   if (matches.length === 0) {
-    const largest = sorted[sorted.length - 1];
     return {
       requiredAirflowLbMin,
       pressureRatio,
-      recommendedTurbos: [largest],
-      fallbackTurbo: largest,
+      recommendedTurbos: [selectedTurbo],
+      fallbackTurbo: selectedTurbo,
       fallbackSpecs: buildFallbackSpecs(requiredAirflowLbMin, estimatedCrankHp),
       boostEstimateRows: buildBoostRows(input, selectedTurbo),
     };

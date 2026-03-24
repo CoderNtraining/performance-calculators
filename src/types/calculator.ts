@@ -1,6 +1,7 @@
 import { FuelSystemProduct, InjectorProduct, TurboProduct } from './products';
 
 export type CalculatorMode = 'turbo' | 'fuel';
+export type SizingMode = 'hp' | 'boost';
 
 export interface WarningItem {
   id: string;
@@ -9,6 +10,7 @@ export interface WarningItem {
 
 export interface CalculationInput {
   selectedModes: CalculatorMode[];
+  sizingMode: SizingMode;
   engineDisplacement: string;
   cylinderCount: number;
   boostPsi: number;
