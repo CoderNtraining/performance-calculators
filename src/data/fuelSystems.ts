@@ -8,8 +8,8 @@ export const FUEL_SYSTEMS: FuelSystemProduct[] = [
     maxHp: 600,
     compatibleFuels: ['pump_gas', 'e85'],
     note: 'Ideal for mild boosted street combinations with reliable pressure control.',
-    url: 'https://yourstore.com/product/dual-255-in-tank',
-    affiliateUrl: 'https://affiliate.example.com/?product=dual-255-in-tank',
+    source: 'customer',
+    link: 'https://yourstore.com/product/dual-255-in-tank',
   },
   {
     id: 'fs-700',
@@ -18,6 +18,9 @@ export const FUEL_SYSTEMS: FuelSystemProduct[] = [
     maxHp: 900,
     compatibleFuels: ['pump_gas', 'e85'],
     note: 'Balanced street/strip setup with robust headroom and multiple fuel compatibility.',
+    source: 'affiliate',
+    link: 'https://affiliate.example.com/?product=triple-325-return',
+    affiliateProvider: 'custom',
   },
   {
     id: 'fs-1000',
@@ -26,6 +29,8 @@ export const FUEL_SYSTEMS: FuelSystemProduct[] = [
     maxHp: 1250,
     compatibleFuels: ['pump_gas', 'e85'],
     note: 'Designed for aggressive boosted applications with stable high-pressure operation.',
+    source: 'customer',
+    link: 'https://yourstore.com/product/brushless-dual-pump',
   },
   {
     id: 'fs-1500',
@@ -34,5 +39,8 @@ export const FUEL_SYSTEMS: FuelSystemProduct[] = [
     maxHp: 1800,
     compatibleFuels: ['e85'],
     note: 'Race-oriented system for major airflow combinations and extreme power levels.',
+    source: 'affiliate',
+    link: 'https://affiliate.example.com/?product=triple-brushless-competition',
+    affiliateProvider: 'custom',
   },
 ];

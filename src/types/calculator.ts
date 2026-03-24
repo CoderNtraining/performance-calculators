@@ -2,6 +2,7 @@ import { FuelSystemProduct, InjectorProduct, TurboProduct } from './products';
 
 export type CalculatorMode = 'turbo' | 'fuel';
 export type SizingMode = 'hp' | 'boost';
+export type { FuelSystemProduct, InjectorProduct, TurboProduct };
 
 export interface WarningItem {
   id: string;
@@ -42,6 +43,7 @@ export interface TurboCalculationResult {
   requiredAirflowLbMin: number;
   pressureRatio: number;
   recommendedTurbos: TurboProduct[];
+  alternativeTurbos?: TurboProduct[];
   fallbackTurbo?: TurboProduct;
   fallbackSpecs?: TurboFallbackSpecs;
   boostEstimateRows: TurboBoostRow[];
@@ -51,9 +53,11 @@ export interface FuelCalculationResult {
   estimatedCrankHp: number;
   requiredInjectorCcMin: number;
   injectorRecommendation: InjectorProduct;
+  alternativeInjector?: InjectorProduct;
   injectorAtLimit: boolean;
   noExactInjectorMatch: boolean;
   fuelSystemRecommendation: FuelSystemProduct;
+  alternativeFuelSystem?: FuelSystemProduct;
   fuelSystemNearLimit: boolean;
 }
 

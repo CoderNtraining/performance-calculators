@@ -17,3 +17,9 @@ body {
   background-color: var(--bg);
   color: var(--text);
 }
+
+body[data-demo-view='true'] nextjs-portal,
+body[data-demo-view='true'] [data-next-badge-root],
+body[data-demo-view='true'] [data-nextjs-dev-tools-button] {
+  display: none !important;
+}

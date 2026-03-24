@@ -9,8 +9,8 @@ export const INJECTORS: InjectorProduct[] = [
     lbHr: 78,
     fuels: ['pump_gas'],
     note: 'Great for mild street turbo applications with excellent atomization.',
-    url: 'https://yourstore.com/product/950cc-injectors',
-    affiliateUrl: 'https://affiliate.example.com/?product=950cc-injectors',
+    source: 'customer',
+    link: 'https://yourstore.com/product/950cc-injectors',
   },
   {
     id: 'inj-1200',
@@ -20,6 +20,9 @@ export const INJECTORS: InjectorProduct[] = [
     lbHr: 99,
     fuels: ['pump_gas', 'e85'],
     note: 'Versatile injector for pump gas or E85 blends with wide operating range.',
+    source: 'affiliate',
+    link: 'https://affiliate.example.com/?product=1200cc-injectors',
+    affiliateProvider: 'custom',
   },
   {
     id: 'inj-1650',
@@ -29,6 +32,8 @@ export const INJECTORS: InjectorProduct[] = [
     lbHr: 136,
     fuels: ['pump_gas', 'e85'],
     note: 'Good headroom for higher horsepower builds with superior spray pattern.',
+    source: 'customer',
+    link: 'https://yourstore.com/product/1650cc-injectors',
   },
   {
     id: 'inj-2200',
@@ -38,6 +43,9 @@ export const INJECTORS: InjectorProduct[] = [
     lbHr: 182,
     fuels: ['e85'],
     note: 'High-volume injector aimed at dedicated ethanol setups with maximum flow.',
+    source: 'affiliate',
+    link: 'https://affiliate.example.com/?product=2200cc-injectors',
+    affiliateProvider: 'custom',
   },
   {
     id: 'inj-2600',
@@ -47,5 +55,7 @@ export const INJECTORS: InjectorProduct[] = [
     lbHr: 215,
     fuels: ['e85'],
     note: 'Maximum-capacity injector for extreme power levels and racing applications.',
+    source: 'customer',
+    link: 'https://yourstore.com/product/2600cc-injectors',
   },
 ];

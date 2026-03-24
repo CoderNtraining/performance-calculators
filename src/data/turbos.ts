@@ -15,8 +15,9 @@ export const TURBOS: TurboProduct[] = [
     note: 'Compact turbo suitable for smaller engines with moderate boost requirements.',
     recommendedUse: 'Street builds, mild performance upgrades.',
     sourceFamily: 'Garrett GTX3576R Gen II',
-    url: 'https://yourstore.com/product/gtx3576r',
-    affiliateUrl: 'https://affiliate.example.com/?product=gtx3576r',
+    source: 'affiliate',
+    link: 'https://affiliate.example.com/?product=gtx3576r',
+    affiliateProvider: 'custom',
   },
   {
     id: 'gen-62-68',
@@ -33,6 +34,8 @@ export const TURBOS: TurboProduct[] = [
     note: 'Balanced turbo offering good spool and flow for mid-range power levels.',
     recommendedUse: 'Street/strip applications, moderate horsepower targets.',
     sourceFamily: 'BorgWarner S300SX-E / S362',
+    source: 'customer',
+    link: 'https://yourstore.com/product/s300sx',
   },
   {
     id: 'gen-66-73',
@@ -49,6 +52,9 @@ export const TURBOS: TurboProduct[] = [
     note: 'Larger compressor wheel provides better top-end flow for higher boost.',
     recommendedUse: 'High-performance street cars, boosted applications.',
     sourceFamily: 'BorgWarner S300SX-E / S366',
+    source: 'affiliate',
+    link: 'https://affiliate.example.com/?product=s366',
+    affiliateProvider: 'custom',
   },
   {
     id: 'gen-75-96',
@@ -65,6 +71,8 @@ export const TURBOS: TurboProduct[] = [
     note: 'Large-frame turbo with excellent flow capacity for big power builds.',
     recommendedUse: 'Large displacement engines, high boost levels.',
     sourceFamily: 'BorgWarner S400SX4 / S475',
+    source: 'customer',
+    link: 'https://yourstore.com/product/s475',
   },
   {
     id: 'gen-80-96',
@@ -81,6 +89,9 @@ export const TURBOS: TurboProduct[] = [
     note: 'High-flow large-frame turbo for serious performance applications.',
     recommendedUse: 'Competition builds, extreme power levels.',
     sourceFamily: 'BorgWarner S400SX-E / S480SX-E',
+    source: 'affiliate',
+    link: 'https://affiliate.example.com/?product=s480',
+    affiliateProvider: 'custom',
   },
   {
     id: 'gen-88-96',
@@ -97,6 +108,8 @@ export const TURBOS: TurboProduct[] = [
     note: 'Top-tier large-frame turbo with massive flow potential.',
     recommendedUse: 'Professional racing, maximum performance.',
     sourceFamily: 'BorgWarner S400SX-E / S488SX-E',
+    source: 'customer',
+    link: 'https://yourstore.com/product/s488',
   },
   {
     id: 'gen-88-110',
@@ -113,6 +126,9 @@ export const TURBOS: TurboProduct[] = [
     note: 'Extreme-flow turbo for the largest engines and highest power outputs.',
     recommendedUse: 'Large frame applications, race-level builds.',
     sourceFamily: 'BorgWarner S500SX-E / S588SX-E',
+    source: 'affiliate',
+    link: 'https://affiliate.example.com/?product=s588',
+    affiliateProvider: 'custom',
   },
   {
     id: 'gen-94-110',
@@ -129,5 +145,7 @@ export const TURBOS: TurboProduct[] = [
     note: 'Ultimate large-frame turbo for maximum airflow and power.',
     recommendedUse: 'Extreme competition, record-breaking builds.',
     sourceFamily: 'BorgWarner S500SX-E / S594SX-E',
+    source: 'customer',
+    link: 'https://yourstore.com/product/s594',
   },
 ];

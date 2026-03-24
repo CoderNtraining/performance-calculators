@@ -4,6 +4,8 @@ import { FormEvent, useState } from 'react';
 import { formatDisplacementInput, formatNumber } from '@/lib/formatters';
 import { parseEngineDisplacement } from '@/lib/parsing';
 import { calculateRecommendations } from '@/lib/recommendation';
+import { formatInjectorCc } from '@/lib/calculators/shared';
+import { getHeadroomPercent } from '@/lib/recommendationDisplay';
 import { validateInputs } from '@/lib/validation';
 import { CalculationInput, CalculatorMode, CalculationResult, SizingMode } from '@/types/calculator';
 import { FieldRow } from '@/components/calculator/FieldRow';
@@ -12,6 +14,10 @@ import { InjectorRecommendationCard } from '@/components/calculator/InjectorReco
 import { TurboRecommendationCard } from '@/components/calculator/TurboRecommendationCard';
 import { TurboSpecFallbackCard } from '@/components/calculator/TurboSpecFallbackCard';
 import { WarningList } from '@/components/calculator/WarningList';
+import { BuildSummaryCard } from '@/components/calculator/BuildSummaryCard';
+import { LeadCapture } from '@/components/calculator/LeadCapture';
+import { NextSteps } from '@/components/calculator/NextSteps';
+import { WhyRecommended } from '@/components/calculator/WhyRecommended';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -44,11 +50,34 @@ export default function HomePage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [result, setResult] = useState<CalculationResult | null>(null);
 
-  const selectedModes: CalculatorMode[] = [activeTab];
   const displacementParsed = parseEngineDisplacement(input.engineDisplacement);
-  const normalizedDisplacement = displacementParsed
-    ? `${formatNumber(displacementParsed.liters, 2)}L / ${Math.round(displacementParsed.cubicInches)}ci`
-    : null;
+
+  // Event tracking handlers
+  const handleCalculate = (calculationResult: CalculationResult) => {
+    console.log('onCalculate', { input, result: calculationResult });
+  };
+
+  const handleProductClick = (productId: string) => {
+    console.log('onProductClick', productId);
+  };
+
+  const handleAffiliateClick = (productId: string) => {
+    console.log('onAffiliateClick', productId);
+  };
+
+  const handleLeadSubmit = (data: { name: string; email: string; notes?: string }) => {
+    console.log('onLeadSubmit', data);
+  };
+
+  const handleAddToQuote = () => {
+    console.log('onAddToQuote');
+    alert('Added to quote! (Demo functionality)');
+  };
+
+  const handleTalkToExpert = () => {
+    console.log('onTalkToExpert');
+    alert('Expert consultation request sent! (Demo functionality)');
+  };
 
   function toggleMode(mode: CalculatorMode) {
     setActiveTab(mode);
@@ -64,7 +93,9 @@ export default function HomePage() {
       return;
     }
 
-    setResult(calculateRecommendations(input));
+    const calculationResult = calculateRecommendations(input);
+    setResult(calculationResult);
+    handleCalculate(calculationResult);
   }
 
   function onReset() {
@@ -76,6 +107,34 @@ export default function HomePage() {
     setResult(null);
   }
 
+  const primaryTurbo = result?.turbo?.recommendedTurbos[0];
+  const alternativeTurbo = result?.turbo?.recommendedTurbos[1] ?? result?.turbo?.alternativeTurbos?.[0];
+  const primaryTurboHeadroom = primaryTurbo && result?.turbo
+    ? getHeadroomPercent(primaryTurbo.airflowLbMin, result.turbo.requiredAirflowLbMin)
+    : undefined;
+  const primaryInjectorHeadroom = result?.fuel
+    ? getHeadroomPercent(result.fuel.injectorRecommendation.cc, result.fuel.requiredInjectorCcMin)
+    : undefined;
+  const primaryFuelSystemHeadroom = result?.fuel
+    ? getHeadroomPercent(result.fuel.fuelSystemRecommendation.maxHp, result.fuel.estimatedCrankHp)
+    : undefined;
+  const turboWhyLines = primaryTurbo && primaryTurboHeadroom !== undefined
+    ? [
+        'This recommendation matches your power goal with a safe tuning margin.',
+        primaryTurboHeadroom > 25
+          ? 'It gives your setup extra headroom for tuning changes or future growth.'
+          : 'It provides enough airflow for your target without pushing the setup too close to the limit.',
+      ]
+    : [];
+  const fuelWhyLines = result?.fuel && primaryInjectorHeadroom !== undefined && primaryFuelSystemHeadroom !== undefined
+    ? [
+        `The ${formatInjectorCc(result.fuel.injectorRecommendation.cc)} injector recommendation supports your stated fuel demand with a safe margin.`,
+        primaryFuelSystemHeadroom > 20
+          ? 'The fuel system recommendation leaves room for dependable performance and future growth.'
+          : 'The fuel system recommendation is sized to support your goal without overcomplicating the setup.',
+      ]
+    : [];
+
   return (
     <div className="min-h-screen p-6 text-slate-100 antialiased" style={{ backgroundColor: 'var(--bg)', color: 'var(--text)' }}>
       <header className="space-y-2 mb-4">
@@ -83,11 +142,11 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             {brandName && <div>
               <h1 className="text-3xl font-bold tracking-tight">{brandName}</h1>
-              <p className="text-slate-400 text-sm">Professional performance tuning tools for your customers.</p>
+              <p className="text-slate-400 text-sm">Professional performance parts and expert guidance for your build.</p>
             </div>}
             <div className="text-xs text-slate-400">Powered by {poweredBy}</div>
           </div>
-          <p className="mt-3 text-slate-300">Turbo and fuel system-sizing calculator with buyer-friendly conversion focus.</p>
+          <p className="mt-3 text-slate-300">Get the perfect turbo and fuel system setup for your power goals.</p>
         </div>
       </header>
 
@@ -227,7 +286,7 @@ export default function HomePage() {
               style={{ borderColor: 'var(--muted)', backgroundColor: 'var(--surface)', color: 'var(--text)' }}
               aria-expanded={showAdvanced}
             >
-              {showAdvanced ? 'Hide Advanced Inputs' : 'Show Advanced Inputs'}
+              {showAdvanced ? 'Hide Advanced (For Tuners)' : 'Show Advanced (For Tuners)'}
             </button>
             {showAdvanced && (
               <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -370,64 +429,124 @@ export default function HomePage() {
       </Card>
 
       {result && (
-        <section className="space-y-6">
-          {activeTab === 'turbo' && result.turbo && (
-            <Card className="border-cyan-600/60" style={{ borderColor: 'var(--accent)' }}>
-              <h2 className="text-lg font-semibold text-cyan-200">
-                {sizingMode === 'hp' ? `Best-fit Turbo for ${input.horsepower} HP` : `Best-fit Turbo for ${input.boostPsi} PSI Boost`}
-              </h2>
-              <p className="mt-2 text-slate-300">
-                {result.turbo.recommendedTurbos.length > 0
-                  ? `Top recommendation is ${result.turbo.recommendedTurbos[0].name} with ${formatNumber(result.turbo.recommendedTurbos[0].airflowLbMin)} lb/min airflow.`
-                  : 'No matching turbo found; review fallback specs below.'}
-              </p>
-              <p className="mt-1 text-sm text-slate-400">
-                {sizingMode === 'hp'
-                  ? `Estimated required airflow: ${formatNumber(result.turbo.requiredAirflowLbMin)} lb/min at ~15 PSI boost.`
-                  : `Estimated required airflow: ${formatNumber(result.turbo.requiredAirflowLbMin)} lb/min at ${input.boostPsi} PSI boost.`}
-              </p>
-            </Card>
-          )}
+        <section className="space-y-8 pt-8">
+          <BuildSummaryCard
+            input={input}
+            result={result}
+            onAddToQuote={handleAddToQuote}
+            onTalkToExpert={handleTalkToExpert}
+          />
 
-          {activeTab === 'fuel' && result.fuel && (
-            <Card className="border-emerald-600/60" style={{ borderColor: 'var(--accent2)' }}>
-              <h2 className="text-lg font-semibold text-emerald-200">Recommended Fuel System & Injectors for {input.horsepower} HP</h2>
-              <p className="mt-2 text-slate-300">
-                Injector target: {formatNumber(result.fuel.requiredInjectorCcMin)} cc/min. Fuel system capacity required: {result.fuel.fuelSystemRecommendation.maxHp} hp.
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-white">Main Recommendation</h2>
+              <p className="text-sm text-slate-400">
+                Buyer-first parts guidance based on your stated goal, fuel, and available headroom.
               </p>
-              <p className="mt-1 text-sm text-slate-400">Keep at least 15% headroom for safe tuning margin.</p>
-            </Card>
-          )}
+            </div>
 
-          {activeTab === 'turbo' && result.turbo && (
-            <div>
-              <h2 className="text-xl font-semibold text-cyan-300 mb-4">Turbo Recommendations</h2>
-              <div className="grid gap-4 md:grid-cols-2">
-                {result.turbo.recommendedTurbos.map((turbo) => (
-                  <TurboRecommendationCard
-                    key={turbo.id}
-                    turbo={turbo}
-                    requiredAirflow={result.turbo?.requiredAirflowLbMin}
-                    estimatedHp={result.fuel?.estimatedCrankHp}
+            {activeTab === 'turbo' && result.turbo && primaryTurbo && (
+              <div className="space-y-4">
+                <TurboRecommendationCard
+                  turbo={primaryTurbo}
+                  requiredAirflow={result.turbo.requiredAirflowLbMin}
+                  onProductClick={handleProductClick}
+                  onAffiliateClick={handleAffiliateClick}
+                  eyebrow="Best-Fit Turbo"
+                  variant="primary"
+                />
+                <WhyRecommended lines={turboWhyLines} />
+              </div>
+            )}
+
+            {activeTab === 'fuel' && result.fuel && (
+              <div className="space-y-4">
+                <div className="grid gap-4 xl:grid-cols-2">
+                  <InjectorRecommendationCard
+                    fuelResult={result.fuel}
+                    onProductClick={handleProductClick}
+                    onAffiliateClick={handleAffiliateClick}
+                    eyebrow="Best-Fit Injector"
+                    variant="primary"
                   />
-                ))}
+                  <FuelSystemRecommendationCard
+                    fuelResult={result.fuel}
+                    onProductClick={handleProductClick}
+                    onAffiliateClick={handleAffiliateClick}
+                    eyebrow="Best-Fit Fuel System"
+                    variant="primary"
+                  />
+                </div>
+                <WhyRecommended lines={fuelWhyLines} />
+              </div>
+            )}
+          </div>
+
+          {activeTab === 'turbo' && alternativeTurbo && result?.turbo && primaryTurboHeadroom !== undefined && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold text-white">Alternative Option</h2>
+                <p className="text-sm text-slate-400">
+                  A secondary path if you want a different balance of headroom and fit.
+                </p>
+              </div>
+              <TurboRecommendationCard
+                turbo={alternativeTurbo}
+                requiredAirflow={result.turbo.requiredAirflowLbMin}
+                onProductClick={handleProductClick}
+                onAffiliateClick={handleAffiliateClick}
+                eyebrow="Alternative Turbo"
+                variant="secondary"
+                comparisonHeadroomPercent={primaryTurboHeadroom}
+              />
+            </div>
+          )}
+
+          {activeTab === 'fuel' && result.fuel && (result.fuel.alternativeInjector || result.fuel.alternativeFuelSystem) && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold text-white">Alternative Option</h2>
+                <p className="text-sm text-slate-400">
+                  Secondary options for a tighter fit or more headroom, depending on what you want from the build.
+                </p>
+              </div>
+              <div className="grid gap-4 xl:grid-cols-2">
+                {result.fuel.alternativeInjector && primaryInjectorHeadroom !== undefined && (
+                  <InjectorRecommendationCard
+                    fuelResult={{ ...result.fuel, injectorRecommendation: result.fuel.alternativeInjector }}
+                    onProductClick={handleProductClick}
+                    onAffiliateClick={handleAffiliateClick}
+                    eyebrow="Alternative Injector"
+                    variant="secondary"
+                    comparisonHeadroomPercent={primaryInjectorHeadroom}
+                  />
+                )}
+                {result.fuel.alternativeFuelSystem && primaryFuelSystemHeadroom !== undefined && (
+                  <FuelSystemRecommendationCard
+                    fuelResult={{ ...result.fuel, fuelSystemRecommendation: result.fuel.alternativeFuelSystem }}
+                    onProductClick={handleProductClick}
+                    onAffiliateClick={handleAffiliateClick}
+                    eyebrow="Alternative Fuel System"
+                    variant="secondary"
+                    comparisonHeadroomPercent={primaryFuelSystemHeadroom}
+                  />
+                )}
               </div>
             </div>
           )}
 
           {activeTab === 'turbo' && result.turbo?.fallbackSpecs && (
-            <div>
-              <h2 className="text-xl font-semibold text-amber-300 mb-4">Minimum Required Turbo Specifications</h2>
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-white">Custom Turbo Specs</h2>
               <TurboSpecFallbackCard fallback={result.turbo.fallbackSpecs} />
             </div>
           )}
 
-          {activeTab === 'fuel' && result.fuel && (
-            <div className="space-y-4">
-              <InjectorRecommendationCard fuelResult={result.fuel} />
-              <FuelSystemRecommendationCard fuelResult={result.fuel} />
-            </div>
-          )}
+          <div id="lead-capture">
+            <LeadCapture onLeadSubmit={handleLeadSubmit} />
+          </div>
+
+          <NextSteps />
 
           {result.warnings.length > 0 && <WarningList warnings={result.warnings} />}
         </section>

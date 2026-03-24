@@ -1,3 +1,6 @@
+export type ProductSource = 'customer' | 'affiliate';
+export type AffiliateProvider = 'amazon' | 'summit' | 'jegs' | 'custom';
+
 export interface TurboProduct {
   id: string;
   brand: string;
@@ -13,8 +16,9 @@ export interface TurboProduct {
   note: string;
   recommendedUse: string;
   sourceFamily?: string;
-  url?: string;
-  affiliateUrl?: string;
+  source: ProductSource;
+  link: string;
+  affiliateProvider?: AffiliateProvider;
 }
 
 export interface InjectorProduct {
@@ -25,8 +29,9 @@ export interface InjectorProduct {
   lbHr: number;
   fuels: Array<'pump_gas' | 'e85'>;
   note: string;
-  url?: string;
-  affiliateUrl?: string;
+  source: ProductSource;
+  link: string;
+  affiliateProvider?: AffiliateProvider;
 }
 
 export interface FuelSystemProduct {
@@ -36,6 +41,7 @@ export interface FuelSystemProduct {
   maxHp: number;
   compatibleFuels: Array<'pump_gas' | 'e85'>;
   note: string;
-  url?: string;
-  affiliateUrl?: string;
+  source: ProductSource;
+  link: string;
+  affiliateProvider?: AffiliateProvider;
 }

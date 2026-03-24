@@ -82,20 +82,42 @@ export function calculateTurboSizing(input: CalculationInput): TurboCalculationR
     estimatedCrankHp = requiredAirflowLbMin * 10;
   }
 
-  let matches: TurboProduct[];
+  const customerTurbos = TURBOS.filter(t => t.source === 'customer');
+  const affiliateTurbos = TURBOS.filter(t => t.source === 'affiliate');
+
+  let primaryMatches: TurboProduct[] = [];
+  let alternativeMatches: TurboProduct[] = [];
+
   if (input.sizingMode === 'hp') {
     const hp = input.horsepower;
-    matches = TURBOS.filter((turbo) => turbo.airflowLbMin >= requiredAirflowLbMin && turbo.horsepowerRangeMin <= hp && hp <= turbo.horsepowerRangeMax)
-      .sort((a, b) => a.airflowLbMin - b.airflowLbMin)
-      .slice(0, 2);
+    const customerHpMatches = customerTurbos.filter(t => t.airflowLbMin >= requiredAirflowLbMin && t.horsepowerRangeMin <= hp && hp <= t.horsepowerRangeMax)
+      .sort((a, b) => a.airflowLbMin - b.airflowLbMin);
+    const affiliateHpMatches = affiliateTurbos.filter(t => t.airflowLbMin >= requiredAirflowLbMin && t.horsepowerRangeMin <= hp && hp <= t.horsepowerRangeMax)
+      .sort((a, b) => a.airflowLbMin - b.airflowLbMin);
+
+    if (customerHpMatches.length > 0) {
+      primaryMatches = customerHpMatches.slice(0, 2);
+      alternativeMatches = affiliateHpMatches.slice(0, 2);
+    } else {
+      primaryMatches = affiliateHpMatches.slice(0, 2);
+    }
   } else {
-    const sorted = [...TURBOS].sort((a, b) => a.airflowLbMin - b.airflowLbMin);
-    matches = sorted.filter((turbo) => turbo.airflowLbMin >= requiredAirflowLbMin).slice(0, 2);
+    const customerAirflowMatches = customerTurbos.filter(t => t.airflowLbMin >= requiredAirflowLbMin)
+      .sort((a, b) => a.airflowLbMin - b.airflowLbMin);
+    const affiliateAirflowMatches = affiliateTurbos.filter(t => t.airflowLbMin >= requiredAirflowLbMin)
+      .sort((a, b) => a.airflowLbMin - b.airflowLbMin);
+
+    if (customerAirflowMatches.length > 0) {
+      primaryMatches = customerAirflowMatches.slice(0, 2);
+      alternativeMatches = affiliateAirflowMatches.slice(0, 2);
+    } else {
+      primaryMatches = affiliateAirflowMatches.slice(0, 2);
+    }
   }
 
-  const selectedTurbo = matches.length > 0 ? matches[0] : TURBOS.sort((a, b) => b.airflowLbMin - a.airflowLbMin)[0];
+  const selectedTurbo = primaryMatches.length > 0 ? primaryMatches[0] : TURBOS.sort((a, b) => b.airflowLbMin - a.airflowLbMin)[0];
 
-  if (matches.length === 0) {
+  if (primaryMatches.length === 0) {
     return {
       requiredAirflowLbMin,
       pressureRatio,
@@ -109,7 +131,8 @@ export function calculateTurboSizing(input: CalculationInput): TurboCalculationR
   return {
     requiredAirflowLbMin,
     pressureRatio,
-    recommendedTurbos: matches,
+    recommendedTurbos: primaryMatches,
+    alternativeTurbos: alternativeMatches.length > 0 ? alternativeMatches : undefined,
     boostEstimateRows: buildBoostRows(input, selectedTurbo),
   };
 }
