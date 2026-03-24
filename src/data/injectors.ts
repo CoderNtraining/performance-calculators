@@ -1,0 +1,49 @@
+import { InjectorProduct } from '@/types/products';
+
+export const INJECTORS: InjectorProduct[] = [
+  {
+    id: 'inj-950',
+    brand: 'Company X Injectors',
+    name: '950cc High-Impedance Injectors',
+    cc: 950,
+    lbHr: 78,
+    fuels: ['pump_gas'],
+    note: 'Great for mild street turbo applications with excellent atomization.',
+  },
+  {
+    id: 'inj-1200',
+    brand: 'Company X Injectors',
+    name: '1200cc High-Impedance Injectors',
+    cc: 1200,
+    lbHr: 99,
+    fuels: ['pump_gas', 'e85'],
+    note: 'Versatile injector for pump gas or E85 blends with wide operating range.',
+  },
+  {
+    id: 'inj-1650',
+    brand: 'Company X Injectors',
+    name: '1650cc High-Impedance Injectors',
+    cc: 1650,
+    lbHr: 136,
+    fuels: ['pump_gas', 'e85'],
+    note: 'Good headroom for higher horsepower builds with superior spray pattern.',
+  },
+  {
+    id: 'inj-2200',
+    brand: 'Company X Injectors',
+    name: '2200cc Low-Impedance Injectors',
+    cc: 2200,
+    lbHr: 182,
+    fuels: ['e85'],
+    note: 'High-volume injector aimed at dedicated ethanol setups with maximum flow.',
+  },
+  {
+    id: 'inj-2600',
+    brand: 'Company X Injectors',
+    name: '2600cc Low-Impedance Injectors',
+    cc: 2600,
+    lbHr: 215,
+    fuels: ['e85'],
+    note: 'Maximum-capacity injector for extreme power levels and racing applications.',
+  },
+];
