@@ -1,4 +1,5 @@
 import { TurboProduct } from '@/types/products';
+import { brandingConfig } from '@/config/branding';
 
 export const TURBOS: TurboProduct[] = [
   {
@@ -21,7 +22,7 @@ export const TURBOS: TurboProduct[] = [
   },
   {
     id: 'gen-62-68',
-    brand: 'Performance Turbo Systems',
+    brand: brandingConfig.demoInHouseLabel,
     name: '62/68',
     compressorInducerMm: 62.99,
     compressorExducerMm: 87.37,
@@ -58,7 +59,7 @@ export const TURBOS: TurboProduct[] = [
   },
   {
     id: 'gen-75-96',
-    brand: 'Performance Turbo Systems',
+    brand: brandingConfig.demoInHouseLabel,
     name: '75/96',
     compressorInducerMm: 75,
     compressorExducerMm: 100,
@@ -95,7 +96,7 @@ export const TURBOS: TurboProduct[] = [
   },
   {
     id: 'gen-88-96',
-    brand: 'Performance Turbo Systems',
+    brand: brandingConfig.demoInHouseLabel,
     name: '88/96',
     compressorInducerMm: 87.93,
     compressorExducerMm: 110,
@@ -132,7 +133,7 @@ export const TURBOS: TurboProduct[] = [
   },
   {
     id: 'gen-94-110',
-    brand: 'Performance Turbo Systems',
+    brand: brandingConfig.demoInHouseLabel,
     name: '94/110',
     compressorInducerMm: 93.80,
     compressorExducerMm: 120,

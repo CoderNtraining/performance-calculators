@@ -1,9 +1,10 @@
 import { FuelSystemProduct } from '@/types/products';
+import { brandingConfig } from '@/config/branding';
 
 export const FUEL_SYSTEMS: FuelSystemProduct[] = [
   {
     id: 'fs-450',
-    brand: "Your Company's Fuel System",
+    brand: brandingConfig.demoInHouseLabel,
     name: 'Dual 255 LPH In-Tank Return System',
     maxHp: 600,
     compatibleFuels: ['pump_gas', 'e85'],
@@ -13,7 +14,7 @@ export const FUEL_SYSTEMS: FuelSystemProduct[] = [
   },
   {
     id: 'fs-700',
-    brand: "Your Company's Fuel System",
+    brand: 'Partner Fuel System',
     name: 'Triple 325 LPH Return System',
     maxHp: 900,
     compatibleFuels: ['pump_gas', 'e85'],
@@ -24,7 +25,7 @@ export const FUEL_SYSTEMS: FuelSystemProduct[] = [
   },
   {
     id: 'fs-1000',
-    brand: "Your Company's Fuel System",
+    brand: brandingConfig.demoInHouseLabel,
     name: 'Brushless Dual Pump Return System',
     maxHp: 1250,
     compatibleFuels: ['pump_gas', 'e85'],
@@ -34,7 +35,7 @@ export const FUEL_SYSTEMS: FuelSystemProduct[] = [
   },
   {
     id: 'fs-1500',
-    brand: "Your Company's Fuel System",
+    brand: 'Partner Fuel System',
     name: 'Triple Brushless Competition System',
     maxHp: 1800,
     compatibleFuels: ['e85'],

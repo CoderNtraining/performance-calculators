@@ -1,9 +1,10 @@
 import { InjectorProduct } from '@/types/products';
+import { brandingConfig } from '@/config/branding';
 
 export const INJECTORS: InjectorProduct[] = [
   {
     id: 'inj-950',
-    brand: 'Company X Injectors',
+    brand: brandingConfig.demoInHouseLabel,
     name: '950cc High-Impedance Injectors',
     cc: 950,
     lbHr: 78,
@@ -26,7 +27,7 @@ export const INJECTORS: InjectorProduct[] = [
   },
   {
     id: 'inj-1650',
-    brand: 'Company X Injectors',
+    brand: brandingConfig.demoInHouseLabel,
     name: '1650cc High-Impedance Injectors',
     cc: 1650,
     lbHr: 136,
@@ -49,7 +50,7 @@ export const INJECTORS: InjectorProduct[] = [
   },
   {
     id: 'inj-2600',
-    brand: 'Company X Injectors',
+    brand: brandingConfig.demoInHouseLabel,
     name: '2600cc Low-Impedance Injectors',
     cc: 2600,
     lbHr: 215,

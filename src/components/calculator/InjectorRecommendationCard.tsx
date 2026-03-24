@@ -56,7 +56,6 @@ export function InjectorRecommendationCard({
       onCtaClick={handleCtaClick}
       variant={variant}
       fitLabel={alternativeMessage?.label}
-      fitDescription={alternativeMessage ? undefined : injector.note}
     />
   );
 }

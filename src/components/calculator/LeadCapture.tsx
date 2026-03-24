@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -32,18 +33,21 @@ export function LeadCapture({ onLeadSubmit }: LeadCaptureProps) {
   };
 
   return (
-    <Card className="border-2 border-emerald-600/60">
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold text-white">Get Your Full Build Plan</h2>
-        <p className="text-slate-300">
-          Get a personalized quote, recommended parts list, and expert review of your setup. We&apos;ll help confirm fitment, compatibility, and the best path for your build.
-        </p>
+    <Card variant="lead-capture">
+      <div className="space-y-5">
+        <Badge variant="info">Quote-Ready Follow-Up</Badge>
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">Get Your Full Build Plan</h2>
+          <p className="text-[var(--text-secondary)]">
+            Get a personalized quote, recommended parts list, and expert review of your setup. We&apos;ll help confirm fitment, compatibility, and the best path for your build.
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="lead-name" className="block text-sm font-medium text-slate-300 mb-1">
-                Name *
+              <label htmlFor="lead-name" className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">
+                Name <span className="text-[var(--danger)]">*</span>
               </label>
               <Input
                 id="lead-name"
@@ -55,8 +59,8 @@ export function LeadCapture({ onLeadSubmit }: LeadCaptureProps) {
               />
             </div>
             <div>
-              <label htmlFor="lead-email" className="block text-sm font-medium text-slate-300 mb-1">
-                Email *
+              <label htmlFor="lead-email" className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">
+                Email <span className="text-[var(--danger)]">*</span>
               </label>
               <Input
                 id="lead-email"
@@ -70,29 +74,31 @@ export function LeadCapture({ onLeadSubmit }: LeadCaptureProps) {
           </div>
 
           <div>
-              <label htmlFor="lead-notes" className="block text-sm font-medium text-slate-300 mb-1">
-                Optional Notes
-              </label>
-              <textarea
-                id="lead-notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Anything you want us to know about the build?"
-                className="w-full rounded-md border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                rows={3}
-              />
+            <label htmlFor="lead-notes" className="mb-1 block text-sm font-medium text-[var(--text-secondary)]">
+              Optional Notes
+            </label>
+            <textarea
+              id="lead-notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Anything you want us to know about the build?"
+              className="w-full rounded-xl border px-3.5 py-2.5 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)]"
+              style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--bg-surface-muted)' }}
+              rows={3}
+            />
           </div>
 
           <Button
             type="submit"
             disabled={isSubmitting || !name || !email}
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="primary"
+            className="w-full py-3 font-semibold"
           >
             {isSubmitting ? 'Sending...' : 'Send My Build Plan'}
           </Button>
         </form>
 
-        <p className="text-xs text-slate-400 text-center">
+        <p className="text-center text-xs text-[var(--text-muted)]">
           We respect your privacy. No spam, ever.
         </p>
       </div>

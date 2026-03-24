@@ -56,7 +56,6 @@ export function FuelSystemRecommendationCard({
       onCtaClick={handleCtaClick}
       variant={variant}
       fitLabel={alternativeMessage?.label}
-      fitDescription={alternativeMessage ? undefined : fuelSystem.note}
     />
   );
 }

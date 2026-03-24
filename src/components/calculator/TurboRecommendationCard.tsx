@@ -56,7 +56,6 @@ export function TurboRecommendationCard({
       onCtaClick={handleCtaClick}
       variant={variant}
       fitLabel={alternativeMessage?.label}
-      fitDescription={alternativeMessage ? undefined : turbo.note}
     />
   );
 }

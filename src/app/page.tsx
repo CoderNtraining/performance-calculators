@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
+import { brandingConfig, getClientBrandName, getClientTagline } from '@/config/branding';
 import { formatDisplacementInput, formatNumber } from '@/lib/formatters';
 import { parseEngineDisplacement } from '@/lib/parsing';
 import { calculateRecommendations } from '@/lib/recommendation';
@@ -18,6 +19,7 @@ import { BuildSummaryCard } from '@/components/calculator/BuildSummaryCard';
 import { LeadCapture } from '@/components/calculator/LeadCapture';
 import { NextSteps } from '@/components/calculator/NextSteps';
 import { WhyRecommended } from '@/components/calculator/WhyRecommended';
+import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -39,9 +41,16 @@ const DEFAULT_INPUT: CalculationInput = {
   injectorDutyCycle: 85,
 };
 
+function getToggleStyle(isActive: boolean): React.CSSProperties {
+  return isActive
+    ? { backgroundColor: 'var(--brand-primary)', color: 'var(--text-primary)', boxShadow: '0 10px 24px rgba(37, 99, 235, 0.22)' }
+    : { color: 'var(--text-secondary)' };
+}
+
 export default function HomePage() {
-  const brandName = 'Your Company'; // Optional: set to '' for no brand
-  const poweredBy = 'Performance Calculations';
+  const brandName = getClientBrandName();
+  const poweredBy = brandingConfig.poweredByLabel;
+  const isDemoMode = brandingConfig.demoMode;
 
   const [input, setInput] = useState<CalculationInput>(DEFAULT_INPUT);
   const [activeTab, setActiveTab] = useState<CalculatorMode>('turbo');
@@ -50,9 +59,6 @@ export default function HomePage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [result, setResult] = useState<CalculationResult | null>(null);
 
-  const displacementParsed = parseEngineDisplacement(input.engineDisplacement);
-
-  // Event tracking handlers
   const handleCalculate = (calculationResult: CalculationResult) => {
     console.log('onCalculate', { input, result: calculationResult });
   };
@@ -136,28 +142,71 @@ export default function HomePage() {
     : [];
 
   return (
-    <div className="min-h-screen p-6 text-slate-100 antialiased" style={{ backgroundColor: 'var(--bg)', color: 'var(--text)' }}>
-      <header className="space-y-2 mb-4">
-        <div className="rounded-xl border border-cyan-400/30 bg-slate-900/70 p-4 shadow-xl backdrop-blur" style={{ borderColor: 'var(--accent)', backgroundColor: 'var(--surface)' }}>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            {brandName && <div>
-              <h1 className="text-3xl font-bold tracking-tight">{brandName}</h1>
-              <p className="text-slate-400 text-sm">Professional performance parts and expert guidance for your build.</p>
-            </div>}
-            <div className="text-xs text-slate-400">Powered by {poweredBy}</div>
+    <div className="min-h-screen p-4 text-[var(--text-primary)] antialiased sm:p-6">
+      <header className="mb-8">
+        <Card variant="informational" className="overflow-hidden">
+          <div className="flex flex-wrap items-start justify-between gap-5">
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                {isDemoMode && <Badge variant="info">{brandingConfig.demoClientLogoLabel}</Badge>}
+                <Badge variant="info">{brandingConfig.demoCatalogLabel}</Badge>
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">{poweredBy}</span>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{brandName}</h1>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">{getClientTagline()}</p>
+                {isDemoMode && (
+                  <p className="mt-2 text-xs text-[var(--text-muted)]">{brandingConfig.demoHelperText}</p>
+                )}
+              </div>
+            </div>
+            {isDemoMode && (
+              <div
+                className="min-w-[140px] rounded-2xl border px-4 py-3 text-center"
+                style={{ borderColor: 'var(--border-strong)', backgroundColor: 'rgba(17, 24, 39, 0.65)' }}
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                  {brandingConfig.demoClientLogoLabel}
+                </p>
+              </div>
+            )}
           </div>
-          <p className="mt-3 text-slate-300">Get the perfect turbo and fuel system setup for your power goals.</p>
-        </div>
+
+          <div className="mt-5 border-t pt-5" style={{ borderColor: 'var(--border-subtle)' }}>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] sm:text-[2rem]">
+              Find the right turbo and fuel system for your power goal
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">
+              Buyer-friendly guidance with expert-backed recommendations and quote-ready next steps.
+            </p>
+          </div>
+        </Card>
       </header>
 
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Sizing Mode</h2>
-        <div className="inline-flex rounded-xl border border-slate-700 bg-slate-900/80 p-1 text-sm" style={{ borderColor: 'var(--muted)', backgroundColor: 'var(--surface)' }}>
+      <section className="mb-10 space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">Quick Inputs</h2>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              Set your power goal, fuel, and core engine details to build a quote-ready recommendation.
+            </p>
+          </div>
+          {isDemoMode && (
+            <p className="text-xs text-[var(--text-muted)]">
+              Demo catalog view: recommendations can pull from {brandingConfig.demoCatalogLabel} and partner products.
+            </p>
+          )}
+        </div>
+
+        <div
+          className="inline-flex rounded-2xl border p-1 text-sm shadow-[var(--shadow-soft)]"
+          style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'rgba(17, 24, 39, 0.78)' }}
+        >
           <button
             type="button"
             onClick={() => setSizingMode('hp')}
-            className={`rounded-lg px-3 py-2 ${sizingMode === 'hp' ? 'bg-cyan-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}
-            style={sizingMode === 'hp' ? { backgroundColor: 'var(--accent)', color: 'white' } : { color: 'var(--text)' }}
+            className="rounded-xl px-4 py-2.5 transition duration-150 hover:text-[var(--text-primary)]"
+            style={getToggleStyle(sizingMode === 'hp')}
             aria-selected={sizingMode === 'hp'}
           >
             Size by HP Goal
@@ -165,216 +214,72 @@ export default function HomePage() {
           <button
             type="button"
             onClick={() => setSizingMode('boost')}
-            className={`rounded-lg px-3 py-2 ${sizingMode === 'boost' ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}
-            style={sizingMode === 'boost' ? { backgroundColor: 'var(--accent2)', color: 'white' } : { color: 'var(--text)' }}
+            className="rounded-xl px-4 py-2.5 transition duration-150 hover:text-[var(--text-primary)]"
+            style={getToggleStyle(sizingMode === 'boost')}
             aria-selected={sizingMode === 'boost'}
           >
             Size by Boost Goal
           </button>
         </div>
-      </div>
 
-      <Card>
-        <form onSubmit={onSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-lg font-semibold">Calculator Mode</h2>
-            <div className="inline-flex rounded-xl border border-slate-700 bg-slate-900/80 p-1 text-sm">
-              <button
-                type="button"
-                onClick={() => toggleMode('turbo')}
-                className={`rounded-lg px-3 py-2 ${activeTab === 'turbo' ? 'bg-cyan-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}
-                aria-selected={activeTab === 'turbo'}
+        <Card variant="informational">
+          <form onSubmit={onSubmit} className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)]">Build Setup</h3>
+                <p className="text-sm text-[var(--text-muted)]">Choose the recommendation path you want to calculate.</p>
+              </div>
+              <div
+                className="inline-flex rounded-2xl border p-1 text-sm shadow-[var(--shadow-soft)]"
+                style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'rgba(17, 24, 39, 0.78)' }}
               >
-                Turbo Sizing
-              </button>
-              <button
-                type="button"
-                onClick={() => toggleMode('fuel')}
-                className={`rounded-lg px-3 py-2 ${activeTab === 'fuel' ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'}`}
-                aria-selected={activeTab === 'fuel'}
-              >
-                Fuel System
-              </button>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-4" style={{ borderColor: 'var(--muted)', backgroundColor: 'var(--surface)' }}>
-            <h3 className="text-sm font-semibold text-slate-100">Quick Inputs</h3>
-            <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <FieldRow label="Engine Displacement" info="Accepts liters or cubic inches. Ex: 5.3L, 408ci.">
-                <div className="space-y-1">
-                  <Input
-                    value={input.engineDisplacement}
-                    onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, engineDisplacement: e.target.value }))}
-                    onBlur={() => setInput((prev: CalculationInput) => ({ ...prev, engineDisplacement: formatDisplacementInput(prev.engineDisplacement) }))}
-                    placeholder="5.3L or 408ci"
-                    aria-label="Engine displacement"
-                  />
-                  {parseEngineDisplacement(input.engineDisplacement) ? (
-                    <p className="text-xs text-slate-400">
-                      Normalized: {formatNumber(parseEngineDisplacement(input.engineDisplacement)!.liters, 2)}L / {Math.round(parseEngineDisplacement(input.engineDisplacement)!.cubicInches)}ci
-                    </p>
-                  ) : (
-                    <p className="text-xs text-amber-400">Enter displacement like 5.3, 5.3L, 408, or 408ci.</p>
-                  )}
-                </div>
-              </FieldRow>
-
-              {(activeTab === 'fuel' || (activeTab === 'turbo' && sizingMode === 'hp')) && (
-                <FieldRow label="Horsepower" info="Target power value for this build.">
-                  <div className="grid grid-cols-2 gap-2">
-                    <Input
-                      type="number"
-                      min={1}
-                      max={3000}
-                      value={input.horsepower}
-                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, horsepower: Number(e.target.value) }))}
-                    />
-                    <Select
-                      value={input.horsepowerType}
-                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, horsepowerType: e.target.value as 'crank' | 'rwhp' }))}
-                      aria-label="Horsepower type"
-                    >
-                      <option value="crank">Crank HP</option>
-                      <option value="rwhp">Wheel HP</option>
-                    </Select>
-                  </div>
-                </FieldRow>
-              )}
-
-              {activeTab === 'turbo' && sizingMode === 'hp' && (
-                <FieldRow label="Drivetrain" info="Used to approximate crank-to-wheel conversion for RWHP.">
-                  <Select
-                    value={input.drivetrain}
-                    onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, drivetrain: e.target.value as 'manual' | 'auto' }))}
-                  >
-                    <option value="manual">Manual (15% loss)</option>
-                    <option value="auto">Auto (18% loss)</option>
-                  </Select>
-                </FieldRow>
-              )}
-
-              {activeTab === 'turbo' && sizingMode === 'boost' && (
-                <FieldRow label="Boost Pressure (PSI)" info="Target manifold pressure above atmospheric pressure.">
-                  <Input
-                    type="number"
-                    min={0}
-                    max={50}
-                    value={input.boostPsi}
-                    onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, boostPsi: Number(e.target.value) }))}
-                  />
-                </FieldRow>
-              )}
-
-              <FieldRow label="Fuel Type" info="Fuel type influences injector and system recommendations.">
-                <Select
-                  value={input.fuelType}
-                  onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, fuelType: e.target.value as 'pump_gas' | 'e85' }))}
+                <button
+                  type="button"
+                  onClick={() => toggleMode('turbo')}
+                  className="rounded-xl px-4 py-2.5 transition duration-150 hover:text-[var(--text-primary)]"
+                  style={getToggleStyle(activeTab === 'turbo')}
+                  aria-selected={activeTab === 'turbo'}
                 >
-                  <option value="pump_gas">Pump Gas</option>
-                  <option value="e85">E85</option>
-                </Select>
-              </FieldRow>
+                  Turbo Sizing
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleMode('fuel')}
+                  className="rounded-xl px-4 py-2.5 transition duration-150 hover:text-[var(--text-primary)]"
+                  style={getToggleStyle(activeTab === 'fuel')}
+                  aria-selected={activeTab === 'fuel'}
+                >
+                  Fuel System
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-4" style={{ borderColor: 'var(--muted)', backgroundColor: 'var(--surface)' }}>
-            <button
-              type="button"
-              onClick={() => setShowAdvanced((prev) => !prev)}
-              className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-left text-sm font-semibold text-slate-200 hover:bg-slate-700"
-              style={{ borderColor: 'var(--muted)', backgroundColor: 'var(--surface)', color: 'var(--text)' }}
-              aria-expanded={showAdvanced}
+            <div
+              className="rounded-[22px] border p-4 shadow-[var(--shadow-soft)]"
+              style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'rgba(17, 24, 39, 0.72)' }}
             >
-              {showAdvanced ? 'Hide Advanced (For Tuners)' : 'Show Advanced (For Tuners)'}
-            </button>
-            {showAdvanced && (
+              <h4 className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--text-secondary)]">Core Inputs</h4>
               <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <FieldRow label="Cylinder Count" info="Total cylinder count for airflow and injector sizing.">
-                  <Input
-                    type="number"
-                    min={1}
-                    value={input.cylinderCount}
-                    onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, cylinderCount: Number(e.target.value) }))}
-                  />
-                </FieldRow>
-
-                <FieldRow label="Max RPM" info="Engine redline; impacts turbo airflow estimation.">
-                  <Input
-                    type="number"
-                    min={1000}
-                    max={12000}
-                    value={input.maxRpm}
-                    onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, maxRpm: Number(e.target.value) }))}
-                  />
-                </FieldRow>
-
-                <FieldRow label="Volumetric Efficiency (VE)" info="Use industry ballpark 80-90% for street engines.">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="range"
-                      min={40}
-                      max={120}
-                      step={1}
-                      value={input.volumetricEfficiency}
-                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, volumetricEfficiency: Number(e.target.value) }))}
-                      aria-label="Volumetric efficiency"
-                    />
+                <FieldRow label="Engine Displacement" info="Accepts liters or cubic inches. Ex: 5.3L, 408ci.">
+                  <div className="space-y-1">
                     <Input
-                      type="number"
-                      min={40}
-                      max={120}
-                      value={input.volumetricEfficiency}
-                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, volumetricEfficiency: Number(e.target.value) }))}
+                      value={input.engineDisplacement}
+                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, engineDisplacement: e.target.value }))}
+                      onBlur={() => setInput((prev: CalculationInput) => ({ ...prev, engineDisplacement: formatDisplacementInput(prev.engineDisplacement) }))}
+                      placeholder="5.3L or 408ci"
+                      aria-label="Engine displacement"
                     />
+                    {parseEngineDisplacement(input.engineDisplacement) ? (
+                      <p className="text-xs text-[var(--text-muted)]">
+                        Normalized: {formatNumber(parseEngineDisplacement(input.engineDisplacement)!.liters, 2)}L / {Math.round(parseEngineDisplacement(input.engineDisplacement)!.cubicInches)}ci
+                      </p>
+                    ) : (
+                      <p className="text-xs text-[var(--warning)]">Enter displacement like 5.3, 5.3L, 408, or 408ci.</p>
+                    )}
                   </div>
                 </FieldRow>
 
-                <FieldRow label="Injector Duty Cycle (%)" info="Recommended 65-80%. Stay below 90% for reliability.">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="range"
-                      min={50}
-                      max={100}
-                      step={1}
-                      value={input.injectorDutyCycle}
-                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, injectorDutyCycle: Number(e.target.value) }))}
-                      aria-label="Injector duty cycle"
-                    />
-                    <Input
-                      type="number"
-                      min={50}
-                      max={100}
-                      value={input.injectorDutyCycle}
-                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, injectorDutyCycle: Number(e.target.value) }))}
-                    />
-                  </div>
-                </FieldRow>
-
-                <FieldRow label="Base Fuel Pressure (psi)" info="Base rail pressure for injector flow correction.">
-                  <Input
-                    type="number"
-                    min={20}
-                    max={60}
-                    step={0.1}
-                    value={input.baseFuelPressure}
-                    onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, baseFuelPressure: Number(e.target.value) }))}
-                  />
-                </FieldRow>
-
-                {activeTab === 'turbo' && sizingMode === 'hp' && (
-                  <FieldRow label="Boost Pressure (PSI)" info="Target manifold pressure above atmospheric pressure.">
-                    <Input
-                      type="number"
-                      min={0}
-                      max={50}
-                      value={input.boostPsi}
-                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, boostPsi: Number(e.target.value) }))}
-                    />
-                  </FieldRow>
-                )}
-
-                {activeTab === 'turbo' && sizingMode === 'boost' && (
+                {(activeTab === 'fuel' || (activeTab === 'turbo' && sizingMode === 'hp')) && (
                   <FieldRow label="Horsepower" info="Target power value for this build.">
                     <div className="grid grid-cols-2 gap-2">
                       <Input
@@ -396,7 +301,19 @@ export default function HomePage() {
                   </FieldRow>
                 )}
 
-                {activeTab === 'fuel' && (
+                {activeTab === 'turbo' && sizingMode === 'hp' && (
+                  <FieldRow label="Drivetrain" info="Used to approximate crank-to-wheel conversion for RWHP.">
+                    <Select
+                      value={input.drivetrain}
+                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, drivetrain: e.target.value as 'manual' | 'auto' }))}
+                    >
+                      <option value="manual">Manual (15% loss)</option>
+                      <option value="auto">Auto (18% loss)</option>
+                    </Select>
+                  </FieldRow>
+                )}
+
+                {activeTab === 'turbo' && sizingMode === 'boost' && (
                   <FieldRow label="Boost Pressure (PSI)" info="Target manifold pressure above atmospheric pressure.">
                     <Input
                       type="number"
@@ -407,29 +324,180 @@ export default function HomePage() {
                     />
                   </FieldRow>
                 )}
+
+                <FieldRow label="Fuel Type" info="Fuel type influences injector and system recommendations.">
+                  <Select
+                    value={input.fuelType}
+                    onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, fuelType: e.target.value as 'pump_gas' | 'e85' }))}
+                  >
+                    <option value="pump_gas">Pump Gas</option>
+                    <option value="e85">E85</option>
+                  </Select>
+                </FieldRow>
+              </div>
+            </div>
+
+            <div
+              className="rounded-[22px] border p-4 shadow-[var(--shadow-soft)]"
+              style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'rgba(15, 23, 42, 0.78)' }}
+            >
+              <button
+                type="button"
+                onClick={() => setShowAdvanced((prev) => !prev)}
+                className="w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition duration-150 hover:border-[color:rgba(96,165,250,0.35)] hover:bg-[color:rgba(23,32,51,0.92)]"
+                style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--bg-surface)', color: 'var(--text-primary)' }}
+                aria-expanded={showAdvanced}
+              >
+                {showAdvanced ? 'Hide Advanced (For Tuners)' : 'Show Advanced (For Tuners)'}
+              </button>
+              {showAdvanced && (
+                <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FieldRow label="Cylinder Count" info="Total cylinder count for airflow and injector sizing.">
+                    <Input
+                      type="number"
+                      min={1}
+                      value={input.cylinderCount}
+                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, cylinderCount: Number(e.target.value) }))}
+                    />
+                  </FieldRow>
+
+                  <FieldRow label="Max RPM" info="Engine redline; impacts turbo airflow estimation.">
+                    <Input
+                      type="number"
+                      min={1000}
+                      max={12000}
+                      value={input.maxRpm}
+                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, maxRpm: Number(e.target.value) }))}
+                    />
+                  </FieldRow>
+
+                  <FieldRow label="Volumetric Efficiency (VE)" info="Use industry ballpark 80-90% for street engines.">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min={40}
+                        max={120}
+                        step={1}
+                        value={input.volumetricEfficiency}
+                        onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, volumetricEfficiency: Number(e.target.value) }))}
+                        aria-label="Volumetric efficiency"
+                        className="w-full"
+                      />
+                      <Input
+                        type="number"
+                        min={40}
+                        max={120}
+                        value={input.volumetricEfficiency}
+                        onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, volumetricEfficiency: Number(e.target.value) }))}
+                      />
+                    </div>
+                  </FieldRow>
+
+                  <FieldRow label="Injector Duty Cycle (%)" info="Recommended 65-80%. Stay below 90% for reliability.">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min={50}
+                        max={100}
+                        step={1}
+                        value={input.injectorDutyCycle}
+                        onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, injectorDutyCycle: Number(e.target.value) }))}
+                        aria-label="Injector duty cycle"
+                        className="w-full"
+                      />
+                      <Input
+                        type="number"
+                        min={50}
+                        max={100}
+                        value={input.injectorDutyCycle}
+                        onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, injectorDutyCycle: Number(e.target.value) }))}
+                      />
+                    </div>
+                  </FieldRow>
+
+                  <FieldRow label="Base Fuel Pressure (psi)" info="Base rail pressure for injector flow correction.">
+                    <Input
+                      type="number"
+                      min={20}
+                      max={60}
+                      step={0.1}
+                      value={input.baseFuelPressure}
+                      onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, baseFuelPressure: Number(e.target.value) }))}
+                    />
+                  </FieldRow>
+
+                  {activeTab === 'turbo' && sizingMode === 'hp' && (
+                    <FieldRow label="Boost Pressure (PSI)" info="Target manifold pressure above atmospheric pressure.">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={50}
+                        value={input.boostPsi}
+                        onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, boostPsi: Number(e.target.value) }))}
+                      />
+                    </FieldRow>
+                  )}
+
+                  {activeTab === 'turbo' && sizingMode === 'boost' && (
+                    <FieldRow label="Horsepower" info="Target power value for this build.">
+                      <div className="grid grid-cols-2 gap-2">
+                        <Input
+                          type="number"
+                          min={1}
+                          max={3000}
+                          value={input.horsepower}
+                          onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, horsepower: Number(e.target.value) }))}
+                        />
+                        <Select
+                          value={input.horsepowerType}
+                          onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, horsepowerType: e.target.value as 'crank' | 'rwhp' }))}
+                          aria-label="Horsepower type"
+                        >
+                          <option value="crank">Crank HP</option>
+                          <option value="rwhp">Wheel HP</option>
+                        </Select>
+                      </div>
+                    </FieldRow>
+                  )}
+
+                  {activeTab === 'fuel' && (
+                    <FieldRow label="Boost Pressure (PSI)" info="Target manifold pressure above atmospheric pressure.">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={50}
+                        value={input.boostPsi}
+                        onChange={(e) => setInput((prev: CalculationInput) => ({ ...prev, boostPsi: Number(e.target.value) }))}
+                      />
+                    </FieldRow>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {errors.length > 0 && (
+              <div
+                className="rounded-2xl border p-4 text-sm"
+                style={{ borderColor: 'rgba(239, 68, 68, 0.28)', backgroundColor: 'rgba(127, 29, 29, 0.18)', color: 'var(--text-secondary)' }}
+              >
+                <ul className="list-disc pl-5">
+                  {errors.map((error) => (
+                    <li key={error}>{error}</li>
+                  ))}
+                </ul>
               </div>
             )}
-          </div>
 
-          {errors.length > 0 && (
-            <div className="rounded-lg border border-red-700/70 bg-red-950/50 p-3 text-sm text-red-200">
-              <ul className="list-disc pl-5">
-                {errors.map((error) => (
-                  <li key={error}>{error}</li>
-                ))}
-              </ul>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button type="submit" variant="primary">Calculate My Build</Button>
+              <Button type="button" variant="ghost" onClick={onReset}>Reset</Button>
             </div>
-          )}
-
-          <div className="flex gap-3">
-            <Button type="submit" className="bg-blue-700 hover:bg-blue-600">Calculate</Button>
-            <Button type="button" onClick={onReset}>Reset</Button>
-          </div>
-        </form>
-      </Card>
+          </form>
+        </Card>
+      </section>
 
       {result && (
-        <section className="space-y-8 pt-8">
+        <section className="space-y-10 pt-2">
           <BuildSummaryCard
             input={input}
             result={result}
@@ -438,11 +506,9 @@ export default function HomePage() {
           />
 
           <div className="space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-white">Main Recommendation</h2>
-              <p className="text-sm text-slate-400">
-                Buyer-first parts guidance based on your stated goal, fuel, and available headroom.
-              </p>
+            <div className="space-y-1">
+              <h2 className="text-2xl font-bold text-[var(--text-primary)]">Main Recommendations</h2>
+              <p className="text-sm text-[var(--text-muted)]">Quote-ready recommendations built around fit, confidence, and usable headroom.</p>
             </div>
 
             {activeTab === 'turbo' && result.turbo && primaryTurbo && (
@@ -482,13 +548,11 @@ export default function HomePage() {
             )}
           </div>
 
-          {activeTab === 'turbo' && alternativeTurbo && result?.turbo && primaryTurboHeadroom !== undefined && (
+          {activeTab === 'turbo' && alternativeTurbo && result.turbo && primaryTurboHeadroom !== undefined && (
             <div className="space-y-4">
-              <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-white">Alternative Option</h2>
-                <p className="text-sm text-slate-400">
-                  A secondary path if you want a different balance of headroom and fit.
-                </p>
+              <div className="space-y-1">
+                <h2 className="text-2xl font-bold text-[var(--text-primary)]">Alternative Options</h2>
+                <p className="text-sm text-[var(--text-muted)]">Useful comparison paths with lower visual weight than the main recommendation.</p>
               </div>
               <TurboRecommendationCard
                 turbo={alternativeTurbo}
@@ -504,11 +568,9 @@ export default function HomePage() {
 
           {activeTab === 'fuel' && result.fuel && (result.fuel.alternativeInjector || result.fuel.alternativeFuelSystem) && (
             <div className="space-y-4">
-              <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-white">Alternative Option</h2>
-                <p className="text-sm text-slate-400">
-                  Secondary options for a tighter fit or more headroom, depending on what you want from the build.
-                </p>
+              <div className="space-y-1">
+                <h2 className="text-2xl font-bold text-[var(--text-primary)]">Alternative Options</h2>
+                <p className="text-sm text-[var(--text-muted)]">Secondary options for a tighter fit or more room for future growth.</p>
               </div>
               <div className="grid gap-4 xl:grid-cols-2">
                 {result.fuel.alternativeInjector && primaryInjectorHeadroom !== undefined && (
@@ -537,7 +599,7 @@ export default function HomePage() {
 
           {activeTab === 'turbo' && result.turbo?.fallbackSpecs && (
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-white">Custom Turbo Specs</h2>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)]">Custom Turbo Specs</h2>
               <TurboSpecFallbackCard fallback={result.turbo.fallbackSpecs} />
             </div>
           )}

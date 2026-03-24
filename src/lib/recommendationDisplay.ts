@@ -1,4 +1,5 @@
 import { HeadroomStatus } from '@/lib/calculators/shared';
+import { ProductSource } from '@/types/products';
 
 export type RecommendationKind = 'turbo' | 'injector' | 'fuelSystem';
 
@@ -16,25 +17,25 @@ export function getStatusStyles(status: HeadroomStatus) {
   switch (status) {
     case 'Excellent Fit':
       return {
-        badge: 'bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-400/25',
-        text: 'text-emerald-300',
+        text: 'text-[var(--success)]',
       };
     case 'Good Fit':
       return {
-        badge: 'bg-sky-500/15 text-sky-200 ring-1 ring-sky-400/25',
-        text: 'text-sky-300',
+        text: 'text-[var(--brand-primary)]',
       };
     case 'Near Limit':
       return {
-        badge: 'bg-amber-500/15 text-amber-200 ring-1 ring-amber-400/25',
-        text: 'text-amber-300',
+        text: 'text-[var(--warning)]',
       };
     case 'Undersized':
       return {
-        badge: 'bg-rose-500/15 text-rose-200 ring-1 ring-rose-400/25',
-        text: 'text-rose-300',
+        text: 'text-[var(--danger)]',
       };
   }
+}
+
+export function getProductSourceLabel(source: ProductSource) {
+  return source === 'customer' ? 'In-House Product' : 'Partner Product';
 }
 
 export function getSummaryConfidence(status: HeadroomStatus): string {
