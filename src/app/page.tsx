@@ -172,14 +172,6 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="mt-5 border-t pt-5" style={{ borderColor: 'var(--border-subtle)' }}>
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] sm:text-[2rem]">
-              Find the right turbo and fuel system for your power goal
-            </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">
-              Buyer-friendly guidance with expert-backed recommendations and quote-ready next steps.
-            </p>
-          </div>
         </Card>
       </header>
 

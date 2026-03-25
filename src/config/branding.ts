@@ -2,7 +2,7 @@ export const brandingConfig = {
   productBrandName: 'BuildIQ',
   poweredByLabel: 'Powered by BuildIQ',
   demoClientName: 'Client Brand Name',
-  demoClientTagline: 'Performance parts, fitment confidence, and quote-ready support for serious builds.',
+  demoClientTagline: 'Find the right turbo and fuel system for your power goal',
   demoMode: true,
   demoClientLogoLabel: 'Client Logo',
   demoCatalogLabel: 'Client Product Catalog',
